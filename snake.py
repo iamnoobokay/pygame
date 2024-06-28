@@ -17,6 +17,12 @@ FOOD = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
 TICK = 7
 FOOD.fill(RED)
 SCORE = 0
+GAME_OVER_SOUND = pygame.mixer.Sound("game_over.wav")
+EAT_SOUND = pygame.mixer.Sound("eat.mp3")
+DOWN_SOUND = pygame.mixer.Sound('down.mp3')
+LEFT_SOUND = pygame.mixer.Sound('left.mp3')
+RIGHT_SOUND = pygame.mixer.Sound('right.mp3')
+UP_SOUND = pygame.mixer.Sound('up.mp3')
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 flag = 1
 
@@ -57,12 +63,16 @@ while running:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT and direction != 'RIGHT':
                 direction = 'LEFT'
+                LEFT_SOUND.play()
             elif event.key == pygame.K_RIGHT and direction != 'LEFT':
                 direction = 'RIGHT'
+                RIGHT_SOUND.play()
             elif event.key == pygame.K_UP and direction != 'DOWN':
                 direction = 'UP'
+                UP_SOUND.play()
             elif event.key == pygame.K_DOWN and direction != 'UP':
                 direction = 'DOWN'
+                DOWN_SOUND.play()
 
     head_x, head_y = snake[0]
     if direction == 'RIGHT':
@@ -77,9 +87,11 @@ while running:
     new_head = (head_x, head_y)
 
     if ((new_head[0] >= WINDOW_WIDTH or new_head[0] < 0) or (new_head[1] >= WINDOW_HEIGHT or new_head[1] < 0)):
+        GAME_OVER_SOUND.play()
         game_active = not game_active
 
     if new_head in snake:
+        GAME_OVER_SOUND.play()
         game_active = not game_active
 
     if game_active:
@@ -88,8 +100,9 @@ while running:
             foodPos = randomFoodPosition()
             screen.blit(FOOD, foodPos)
             SCORE += 1
+            EAT_SOUND.play()
             screen.fill(BLACK)
-            if (SCORE % 3 == 0):
+            if (SCORE % 5 == 0):
                 TICK += 2
         else:
             snake.pop()
